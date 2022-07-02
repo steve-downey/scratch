@@ -1,55 +1,66 @@
-INSTALL_PREFIX?=../install
+#! /usr/bin/make -f
+# -*-makefile-*-
+INSTALL_PREFIX?=/home/sdowney/install
+BUILD_DIR?=../cmake.bld/$(shell basename $(CURDIR))
+BUILD_TYPE?=RelWithDebInfo
+DEST?=../install
+CMAKE_FLAGS?=
 
 ifeq ($(strip $(TOOLCHAIN)),)
-	BUILD_NAME?=build
-	BUILD_DIR?=../cmake.bld/$(shell basename $(CURDIR))
-	BUILD_PATH?=$(BUILD_DIR)/$(BUILD_NAME)
-	BUILD_TYPE?=RelWithDebInfo
+	_build_name?=build
+	_build_dir?=../cmake.bld/$(shell basename $(CURDIR))
+	_build_type?=RelWithDebInfo
 else
-	BUILD_NAME?=build-$(TOOLCHAIN)
-	BUILD_DIR?=../cmake.bld/$(shell basename $(CURDIR))
-	BUILD_PATH?=$(BUILD_DIR)/$(BUILD_NAME)
-	BUILD_TYPE?=RelWithDebInfo
-	CMAKE_ARGS=-DCMAKE_TOOLCHAIN_FILE=$(CURDIR)/etc/$(TOOLCHAIN)-toolchain.cmake
+	_build_name?=build-$(TOOLCHAIN)
+	_build_dir?=../cmake.bld/$(shell basename $(CURDIR))
+	_build_type?=RelWithDebInfo
+	_cmake_args=-DCMAKE_TOOLCHAIN_FILE=$(CURDIR)/etc/$(TOOLCHAIN)-toolchain.cmake
 endif
+
+
+_build_path?=$(_build_dir)/$(_build_name)
 
 define run_cmake =
 	cmake \
 	-G "Ninja" \
-	-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+	-DCMAKE_BUILD_TYPE=$(_build_type) \
 	-DCMAKE_INSTALL_PREFIX=$(abspath $(INSTALL_PREFIX)) \
 	-DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
-	$(CMAKE_ARGS) \
+	$(_cmake_args) \
 	$(CURDIR)
 endef
 
-default: build
+default: compile
 
-$(BUILD_PATH):
-	mkdir -p $(BUILD_PATH)
+$(_build_path):
+	mkdir -p $(_build_path)
 
-$(BUILD_PATH)/CMakeCache.txt: | $(BUILD_PATH)
-	cd $(BUILD_PATH) && $(run_cmake)
+$(_build_path)/CMakeCache.txt: | $(_build_path)
+	cd $(_build_path) && $(run_cmake)
+	-rm compile_commands.json
+	ln -s $(_build_path)/compile_commands.json
 
-build: $(BUILD_PATH)/CMakeCache.txt
-	cd $(BUILD_PATH) && ninja -k 0
+compile: $(_build_path)/CMakeCache.txt
+	ninja -C $(_build_path) -k 0
 
-install: $(BUILD_PATH)/CMakeCache.txt
-	cd $(BUILD_PATH) && ninja install
+install: $(_build_path)/CMakeCache.txt
+	DESTDIR=$(abspath $(DEST)) ninja -C $(_build_path) -k 0  install
 
-ctest: $(BUILD_PATH)/CMakeCache.txt
-	cd $(BUILD_PATH) && ctest
+ctest: $(_build_path)/CMakeCache.txt
+	cd $(_build_path) && ctest
 
-ctest_ : build
-	cd $(BUILD_PATH) && ctest
+ctest_ : compile
+	cd $(_build_path) && ctest
 
 test: ctest_
 
-cmake: | $(BUILD_PATH)
-	cd $(BUILD_PATH) && $(run-cmake)
+cmake: |  $(_build_path)
+	cd $(_build_path) && ${run_cmake}
 
-clean: $(BUILD_PATH)/CMakeCache.txt
-	cd $(BUILD_PATH) && ninja clean
+clean: $(_build_path)/CMakeCache.txt
+	ninja -C $(_build_path) clean
 
 realclean:
-	rm -rf $(BUILD_PATH)
+	rm -rf $(_build_path)
+
+.PHONY: install ctest cmake clean realclean
