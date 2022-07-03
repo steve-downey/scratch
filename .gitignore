@@ -1,3 +1,4 @@
 cmake.bld
 /papers/generated/
 compile_commands.json
+.update-submodules
