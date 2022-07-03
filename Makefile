@@ -37,7 +37,7 @@ default: compile
 $(_build_path):
 	mkdir -p $(_build_path)
 
-$(_build_path)/CMakeCache.txt: | $(_build_path)
+$(_build_path)/CMakeCache.txt: | $(_build_path) .gitmodules
 	cd $(_build_path) && $(run_cmake)
 	-rm compile_commands.json
 	ln -s $(_build_path)/compile_commands.json
@@ -64,5 +64,11 @@ clean: $(_build_path)/CMakeCache.txt
 
 realclean:
 	rm -rf $(_build_path)
+
+.update-submodules:
+	git submodule update --init --recursive
+	touch .update-submodules
+
+.gitmodules: .update-submodules
 
 .PHONY: install ctest cmake clean realclean
