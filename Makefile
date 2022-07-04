@@ -42,27 +42,27 @@ $(_build_path)/CMakeCache.txt: | $(_build_path) .gitmodules
 	-rm compile_commands.json
 	ln -s $(_build_path)/compile_commands.json
 
-compile: $(_build_path)/CMakeCache.txt
+compile: $(_build_path)/CMakeCache.txt ## Compile the project
 	cmake --build $(_build_path)  --config $(CONFIG) --target all -- -k 0
 
-install: $(_build_path)/CMakeCache.txt
+install: $(_build_path)/CMakeCache.txt ## Install the project
 	DESTDIR=$(abspath $(DEST)) ninja -C $(_build_path) -k 0  install
 
-ctest: $(_build_path)/CMakeCache.txt
+ctest: $(_build_path)/CMakeCache.txt ## Run CTest on current build
 	cd $(_build_path) && ctest
 
 ctest_ : compile
 	cd $(_build_path) && ctest
 
-test: ctest_
+test: ctest_ ## Rebuild and run tests
 
 cmake: |  $(_build_path)
 	cd $(_build_path) && ${run_cmake}
 
-clean: $(_build_path)/CMakeCache.txt
+clean: $(_build_path)/CMakeCache.txt ## Clean the build artifacts
 	cmake --build $(_build_path)  --config $(CONFIG) --target clean
 
-realclean:
+realclean: ## Delete the build directory
 	rm -rf $(_build_path)
 
 .update-submodules:
@@ -71,4 +71,10 @@ realclean:
 
 .gitmodules: .update-submodules
 
-.PHONY: install ctest cmake clean realclean
+
+# Help target
+.PHONY: help
+help: ## Show this help.
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'  $(MAKEFILE_LIST) | sort
+
+.PHONY: install ctest cmake clean realclean help
