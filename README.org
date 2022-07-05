@@ -1,5 +1,60 @@
-# SCRATCH #
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:t todo:t |:t
+#+title: README
+#+date: <2022-07-04 Mon>
+#+author: Steve Downey
+#+email: sdowney@sdowney.org
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 28.1.50 (Org mode 9.5.4)
+#+cite_export:
+
+* A Base 'scratch' template repository
 
 Scratch work
 
 The repository is also my work on, if not 'best', at least good practices with CMake and emerging consensus on file and directory layout.
+
+* CMake Workflow -- targets.mk
+The targets.mk Makefile embodies the normal cmake workflow, making sure the build area is configured for a particular toolchain, compile is run after that, that tests are rebuilt and run after compiling, and so forth.
+
+The Ninja multi-config generator is used, and several configs are created in the build area;
+    - RelWithDebInfo
+    - Debug
+    - Tsan
+    - Asan
+
+The default build is RelWithDebInfo. Other options are selected by the CONFIG paramter.
+
+#+begin_src sh
+make CONFIG=Asan
+#+end_src
+
+The top level Makefile is executable, and is symlinked as ~build~, so equivalently
+#+begin_src sh
+./build CONFIG=Asan
+#+end_src
+
+The build is done, by default, in ../cmake.bld/$(dirname)/build, controlled by the PROJECT variable.
+
+Additional CMake flags can be supplied by ~CMAKE_FLAGS~
+
+* Submodules
+A few git submodules I find useful are linked in.
+
+- https://github.com/google/googletest.git : Google test
+- https://github.com/mpark/wg21.git  : A system for writing papers for C++
+- git@github.com:steve-downey/docker-cxx-dev.git : The definition for the docker image that can be used for builds
+* Docker
+The workflow can be forwarded to a Docker image, instead of being built in the host system.
+
+The target ~use-docker~ enables this by creating the flag file .use-docker
+
+The base image can be created by using the definition in ~docker-inf/docker-cxx-dev/~ with the Makefile provided.
+
+The target ~docker-rebuild~ will create an image for this project, by default on the image ~steve-downey/cxx-dev:latest~ but can be overridden by setting BASE.
+
+The targets in ~targets.mk~ can run in either the host or in a docker container. The targets in Makefile either help build or control that image, or forward to targets.mk.
