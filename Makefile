@@ -1,17 +1,17 @@
 #! /usr/bin/make -f
 # -*-makefile-*-
 
-export INSTALL_PREFIX?=/home/sdowney/install
-export PROJECT?=$(shell basename $(CURDIR))
-export BUILD_DIR?=../cmake.bld/${PROJECT}
-export CONFIGURATION_TYPES?=RelWithDebInfo;Debug;Tsan;Asan
-export DEST?=../install
-export CMAKE_FLAGS?=
-export CONFIG?=RelWithDebInfo
-export USE_DOCKER_FILE:=.use-docker
-export DOCKER_CMD := docker volume create cmake.bld; docker-compose run --rm dev
-export LOCAL_MAKE_CMD := make -f targets.mk
-export MAKE_CMD := $(LOCAL_MAKE_CMD)
+INSTALL_PREFIX?=/home/sdowney/install
+PROJECT?=$(shell basename $(CURDIR))
+BUILD_DIR?=../cmake.bld/${PROJECT}
+CONFIGURATION_TYPES?=RelWithDebInfo;Debug;Tsan;Asan
+DEST?=../install
+CMAKE_FLAGS?=
+#CONFIG?=RelWithDebInfo
+USE_DOCKER_FILE:=.use-docker
+DOCKER_CMD := docker volume create cmake.bld; docker-compose run --rm dev
+LOCAL_MAKE_CMD := make -e -f targets.mk
+MAKE_CMD := $(LOCAL_MAKE_CMD)
 
 TARGETS := test clean all ctest
 
@@ -26,6 +26,8 @@ endif
 ifdef USE_DOCKER
 	MAKE_CMD := $(DOCKER_CMD) $(MAKE_CMD)
 endif
+
+export
 
 .DEFAULT:
 	$(MAKE_CMD) $@
@@ -64,7 +66,6 @@ docker-clean: ## Clean up the docker volumes and rebuilds the image from scratch
 .PHONY: docker-shell
 docker-shell: ## Shell in container
 	docker-compose run --rm dev
-
 
 
 # Help target

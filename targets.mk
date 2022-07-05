@@ -1,11 +1,13 @@
-export INSTALL_PREFIX?=/home/sdowney/install
-export PROJECT?=$(shell basename $(CURDIR))
-export BUILD_DIR?=../cmake.bld/${PROJECT}
-export CONFIGURATION_TYPES?=RelWithDebInfo;Debug;Tsan;Asan
-export DEST?=../install
-export CMAKE_FLAGS?=
-export CONFIG?=RelWithDebInfo
-export USE_DOCKER_FILE>=.use-docker
+INSTALL_PREFIX?=/home/sdowney/install
+PROJECT?=$(shell basename $(CURDIR))
+BUILD_DIR?=../cmake.bld/${PROJECT}
+CONFIGURATION_TYPES?=RelWithDebInfo;Debug;Tsan;Asan
+DEST?=../install
+CMAKE_FLAGS?=
+CONFIG?=RelWithDebInfo
+USE_DOCKER_FILE>=.use-docker
+
+export
 
 ifeq ($(strip $(TOOLCHAIN)),)
 	_build_name?=build
@@ -27,7 +29,7 @@ define run_cmake =
 	-G "Ninja Multi-Config" \
 	-DCMAKE_CONFIGURATION_TYPES=$(_configuration_types) \
 	-DCMAKE_INSTALL_PREFIX=$(abspath $(INSTALL_PREFIX)) \
-	-DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+	-DCMAKE__COMPILE_COMMANDS=1 \
 	$(_cmake_args) \
 	$(CURDIR)
 endef
@@ -64,3 +66,6 @@ clean: $(_build_path)/CMakeCache.txt ## Clean the build artifacts
 
 realclean: ## Delete the build directory
 	rm -rf $(_build_path)
+
+env:
+	$(foreach v, $(.VARIABLES), $(info $(v) = $($(v))))
