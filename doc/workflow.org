@@ -1,3 +1,5 @@
+#+POSTID: 322
+l#+BLOG: sdowney
 #+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:nil arch:headline author:t
 #+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
 #+options: email:nil f:t inline:t num:nil p:nil pri:nil prop:nil stat:t tags:t
@@ -25,6 +27,8 @@
 #+latex_header:
 
 An outline of a template that provides an automated workflow driving a CMake project in a docker container.
+
+This post must be read in concert with https://github.com/steve-downey/scratch of which it is part.
 
 * Routine process should be automated
 
@@ -67,7 +71,7 @@ The build is a Ninja Multi-config build, supporting RelWithDebInfo, Debug, Tsan,
 Because other tools, unfortunately, rely on a ~compile_commands.json~ this system symlinks one from the build area when reconfiguration is done.
 
 #+begin_src makefile
-	default: compile
+default: compile
 
 $(_build_path):
 	mkdir -p $(_build_path)
@@ -168,3 +172,8 @@ docker-shell: ## Shell in container
 I expect I will make many changes to all of this. I'm providing no facilities for you to pick them up. Sorry.
 
 Please consider this as an exhibition of techniques rather than as a solution.
+
+# Local Variables:
+# org-html-htmlize-output-type: inline-css
+# org-html-head: ""
+# End:
