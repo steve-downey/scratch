@@ -12,7 +12,7 @@
 #+creator: Emacs 28.1.50 (Org mode 9.5.4)
 #+cite_export:
 
-[[https://github.com/github/docs/actions/workflows/cmake.yml/badge.svg][Basic RelWithDebInfo Build]]
+Basic RelWithDebInfo Build [[https://github.com/steve-downey/scratch/actions/workflows/cmake.yml/badge.svg]]
 
 * A Base 'scratch' template repository
 
