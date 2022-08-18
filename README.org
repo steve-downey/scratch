@@ -12,6 +12,8 @@
 #+creator: Emacs 28.1.50 (Org mode 9.5.4)
 #+cite_export:
 
+![Basic RelWithDebInfo CMake](https://github.com/github/docs/actions/workflows/cmake.yml/badge.svg)
+
 * A Base 'scratch' template repository
 
 Scratch work
