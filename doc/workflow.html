@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-07-07 Thu 00:17 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A local CMake workflow with Docker</title>
+<meta name="author" content="Steve Downey" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<link rel="stylesheet" type="text/css" href="http://sdowney.org/css/smd-zenburn.css" />
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">A local CMake workflow with Docker</h1>
+<p>
+An outline of a template that provides an automated workflow driving a CMake project in a docker container.
+</p>
+
+<p>
+This post must be read in concert with <a href="https://github.com/steve-downey/scratch">https://github.com/steve-downey/scratch</a> of which it is part.
+</p>
+
+<div id="outline-container-orgde746d6" class="outline-2">
+<h2 id="orgde746d6">Routine process should be automated</h2>
+<div class="outline-text-2" id="text-orgde746d6">
+<p>
+Building a project that uses cmake runs through a predictable lifecycle that you should be able to pick up where you left off without remembering, and for which you should be able to state your goal, not the step you are on. <code>make</code> is designed for this, and can drive the processs.
+</p>
+</div>
+
+<div id="outline-container-orge04834a" class="outline-3">
+<h3 id="orge04834a">The workflow</h3>
+<div class="outline-text-3" id="text-orge04834a">
+<ul class="org-ul">
+<li>Update any submodules</li>
+<li>Create a build area specific to the toolchain</li>
+<li>Run cmake with that toolchain in the build area</li>
+<li>Run the build in the build area</li>
+<li>Run tests, either dependent or independent of rebuild</li>
+<li>Run the intall</li>
+<li>(optionally) Clean the build</li>
+<li>(optionally) Clean the configuration</li>
+</ul>
+
+<p>
+All of the steps have recognizable filesystem artifacts, need to be run in order, and if there are any failures, the process should stop.
+</p>
+
+<p>
+So we want a <code>make</code> system on top of our meta-make build system.
+</p>
+
+<p>
+The one thing this system does, that plain cmake doesn't automate, is making sure that any changes are incorporated into a build before tests are run. CMake splits these, in order to provide the option of running tests without a recompile. I think that is a mistake to automate, but I do provide a target that just runs ctest.
+</p>
+
+<p>
+My normal target is <code>test</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">make test
+</pre>
+</div>
+
+<p>
+This will run through all of the steps, but only those, necessary to compile and run tests. The core commands for the build driver are
+</p>
+<dl class="org-dl">
+<dt>compile</dt><dd>Compile all out of date source</dd>
+<dt>install</dt><dd>Install into the INSTALL_PREFIX</dd>
+<dt>ctest</dt><dd>Run the currently build test suite</dd>
+<dt>test</dt><dd>Build and run the test suite</dd>
+<dt>cmake</dt><dd>run cmake again in the build area</dd>
+<dt>clean</dt><dd>Clean the build area</dd>
+<dt>realclean</dt><dd>Delete the build area</dd>
+</dl>
+
+<p>
+There are several makefile variables controlling the details of what toolchain is used and where things are located. By default the build and install are completely out of the source tree, in ../cmake.bld and ../install respectively, with the build directory further refined by the project name, which defaults to the current directory name, and the toolchain if that is overridden.
+</p>
+
+<p>
+The build is a Ninja Multi-config build, supporting RelWithDebInfo, Debug, Tsan, and Asan, with the particular flavor being selectable by the CONFIG variable. See <code>targets.mk</code> for the variables and details, such as they are.
+</p>
+
+<p>
+Because other tools, unfortunately, rely on a <code>compile_commands.json</code> this system symlinks one from the build area when reconfiguration is done.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-makefile"><span class="org-makefile-targets">default</span>: compile
+
+<span class="org-makefile-targets">$(</span><span class="org-variable-name"><span class="org-makefile-targets">_build_path</span></span><span class="org-makefile-targets">)</span>:
+    mkdir -p $(<span class="org-variable-name">_build_path</span>)
+
+<span class="org-makefile-targets">$(</span><span class="org-variable-name"><span class="org-makefile-targets">_build_path</span></span><span class="org-makefile-targets">)/CMakeCache.txt</span>: | $(<span class="org-variable-name">_build_path</span>) .gitmodules
+    cd $(<span class="org-variable-name">_build_path</span>) &amp;&amp; $(<span class="org-variable-name">run_cmake</span>)
+    <span class="org-type">-</span><span class="org-makefile-shell">rm compile_commands.json</span>
+    ln -s $(<span class="org-variable-name">_build_path</span>)/compile_commands.json
+
+<span class="org-makefile-targets">compile</span>: $(<span class="org-variable-name">_build_path</span>)/CMakeCache.txt <span class="org-comment-delimiter">## </span><span class="org-comment">Compile the project</span>
+    cmake --build $(<span class="org-variable-name">_build_path</span>)  --config $(<span class="org-variable-name">CONFIG</span>) --target all -- -k 0
+
+<span class="org-makefile-targets">install</span>: $(<span class="org-variable-name">_build_path</span>)/CMakeCache.txt <span class="org-comment-delimiter">## </span><span class="org-comment">Install the project</span>
+    <span class="org-variable-name">DESTDIR</span>=$(<span class="org-variable-name">abspath</span> $(<span class="org-variable-name">DEST</span>)) ninja -C $(<span class="org-variable-name">_build_path</span>) -k 0  install
+
+<span class="org-makefile-targets">ctest</span>: $(<span class="org-variable-name">_build_path</span>)/CMakeCache.txt <span class="org-comment-delimiter">## </span><span class="org-comment">Run CTest on current build</span>
+    cd $(<span class="org-variable-name">_build_path</span>) &amp;&amp; ctest
+
+<span class="org-makefile-targets">ctest_</span> : compile
+    cd $(<span class="org-variable-name">_build_path</span>) &amp;&amp; ctest
+
+<span class="org-makefile-targets">test</span>: ctest_ <span class="org-comment-delimiter">## </span><span class="org-comment">Rebuild and run tests</span>
+
+<span class="org-makefile-targets">cmake</span>: |  $(<span class="org-variable-name">_build_path</span>)
+    cd $(<span class="org-variable-name">_build_path</span>) &amp;&amp; ${<span class="org-variable-name">run_cmake</span>}
+
+<span class="org-makefile-targets">clean</span>: $(<span class="org-variable-name">_build_path</span>)/CMakeCache.txt <span class="org-comment-delimiter">## </span><span class="org-comment">Clean the build artifacts</span>
+    cmake --build $(<span class="org-variable-name">_build_path</span>)  --config $(<span class="org-variable-name">CONFIG</span>) --target clean
+
+<span class="org-makefile-targets">realclean</span>: <span class="org-comment-delimiter">## </span><span class="org-comment">Delete the build directory</span>
+    rm -rf $(<span class="org-variable-name">_build_path</span>)
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfe40af1" class="outline-2">
+<h2 id="orgfe40af1">To Docker or Not to Docker</h2>
+<div class="outline-text-2" id="text-orgfe40af1">
+<p>
+The reason for the separate <code>targets.mk</code> file is to simplify running the build purely locally in the host, or in a docker containter. The structure of the build is the same either way. In fact, before I dockerized this template project, there was a single makefile which was mostly the current contents of targets.mk. However, splitting does make the template easier, as project specific targets can naturally be placed in <code>targets</code>.
+</p>
+
+<p>
+Tha outer <code>Makefile</code> is responsible for checking if Docker has been requested and for making sure the container is ready. The makefile has a handful of targets of its own, but otherwide defers everything to <code>targets.mk</code>.
+</p>
+
+<dl class="org-dl">
+<dt>use-docker</dt><dd>set a flag file, USE_DOCKER_FILE, indicating to forward to docker</dd>
+<dt>remove-docker</dt><dd>remove the flag file</dd>
+<dt>docker-rebuild</dt><dd>rebuild the docker image</dd>
+<dt>docker-clean</dt><dd>Clean volumes and rebuild image</dd>
+<dt>docker-shell</dt><dd>Shell in the docker container</dd>
+</dl>
+
+<p>
+The docker container is build via <code>docker-compose</code> with the configuration <code>docker-compose.yml</code>. It uses the <code>Dockerfile</code> which uses <code>steve-downey/cxx-dev:latest</code> as the base image, and mounts the current source directory as a bind mount and a volume for ../cmake.bld.
+</p>
+
+<p>
+I don't publish steve-downey/cxx-dev:latest and you should build your own BASE. I do provide the recipe for the base image as a subprojct in <code>docker-inf/docker-cxx-dev</code>.
+</p>
+
+<p>
+You running unknown things as root scares me.
+</p>
+
+<p>
+The image is assumed to provide current version of gcc and clang as c++ or gcc, or clang++ respectively.
+</p>
+
+<p>
+The intent of the image is to provide compilation services and operate as an lsp server using clangd. Mine doesn't provide X, editors, IDEs, etc. The intent isn't a VM, it's a controlled compiler installation.
+</p>
+
+<p>
+Compiler installations bleed in to each other. Mutliple compilers installed onto the same base system can't be assumed to behave the same way as a compier installed as the only compiler. The ABI libraries vary, as do the standard libaries. Deployment just makes this all an even worse problem. As a Rule I use for production Red Hat's DTS compilers and only deploy on later OSs than I've built on, with strict controls on OS deployments and statically linking everything I possibly can.
+</p>
+
+<p>
+The base image I am using here, steve-downey/cxx-dev, works for me, and is avaiable at <a href="https://github.com/steve-downey/docker-cxx-dev">https://github.com/steve-downey/docker-cxx-dev</a> as a definition as well.
+</p>
+
+<p>
+It is based on current Ubuntu (jammy), installs gcc-12 from the ubuntu repositories, adds the LLVM repos and installs clang-14 from them based on how <a href="https://apt.llvm.org/llvm.sh">https://apt.llvm.org/llvm.sh</a> does.
+</p>
+
+<p>
+It then installs the current release of cmake from <a href="https://apt.kitware.com/ubuntu/">https://apt.kitware.com/ubuntu/</a> because using out of date build tools is a bad idea all around.
+</p>
+
+<p>
+I also configure it to run as USER 1000, because running everything as root is strictly worse, and 1000 is a 99.99 percent solution/
+</p>
+
+<div class="org-src-container">
+<pre class="src src-makefile"><span class="org-makefile-targets">.update-submodules</span>:
+    git submodule update --init --recursive
+    touch .update-submodules
+
+<span class="org-makefile-targets">.gitmodules</span>: .update-submodules
+
+<span class="org-makefile-targets">.PHONY</span>: use-docker
+<span class="org-makefile-targets">use-docker</span>: <span class="org-comment-delimiter">## </span><span class="org-comment">Create docker switch file so that subsequent `make` commands run inside docker container.</span>
+    touch $(<span class="org-variable-name">USE_DOCKER_FILE</span>)
+
+<span class="org-makefile-targets">.PHONY</span>: remove-docker
+<span class="org-makefile-targets">remove-docker</span>: <span class="org-comment-delimiter">## </span><span class="org-comment">Remove docker switch file so that subsequent `make` commands run locally.</span>
+    $(<span class="org-variable-name">RM</span>) $(<span class="org-variable-name">USE_DOCKER_FILE</span>)
+
+<span class="org-makefile-targets">.PHONY</span>: docker-rebuild
+<span class="org-makefile-targets">docker-rebuild</span>: <span class="org-comment-delimiter">## </span><span class="org-comment">Rebuilds the docker file using the latest base image.</span>
+    docker-compose build
+
+<span class="org-makefile-targets">.PHONY</span>: docker-clean
+<span class="org-makefile-targets">docker-clean</span>: <span class="org-comment-delimiter">## </span><span class="org-comment">Clean up the docker volumes and rebuilds the image from scratch.</span>
+    docker-compose down -v
+    docker-compose build
+
+<span class="org-makefile-targets">.PHONY</span>: docker-shell
+<span class="org-makefile-targets">docker-shell</span>: <span class="org-comment-delimiter">## </span><span class="org-comment">Shell in container</span>
+    docker-compose run --rm dev
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge2637f4" class="outline-2">
+<h2 id="orge2637f4">Work In Progress</h2>
+<div class="outline-text-2" id="text-orge2637f4">
+<p>
+I expect I will make many changes to all of this. I'm providing no facilities for you to pick them up. Sorry.
+</p>
+
+<p>
+Please consider this as an exhibition of techniques rather than as a solution.
+</p>
+</div>
+</div>
+</div>
+</body>
+</html>
