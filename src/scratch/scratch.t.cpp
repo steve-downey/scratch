@@ -5,7 +5,7 @@
 using namespace scratch;
 
 TEST(ScratchTest, TestGTest) {
-    ASSERT_EQ(1, 1);
+    ASSERT_EQ(1, 0);
 }
 
 TEST(ScratchTest, Breathing) {
