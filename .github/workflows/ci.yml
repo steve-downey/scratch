@@ -51,3 +51,11 @@ jobs:
       - name: Test
         run: |
           ./bld test TOOLCHAIN=${{ matrix.compiler }}
+
+      - name: Test ASAN
+        run: |
+          ./bld test TOOLCHAIN=${{ matrix.compiler }} CONFIG=Asan
+
+       - name: Test ASAN
+         run: |
+           ./bld test TOOLCHAIN=${{ matrix.compiler }} CONFIG=Tsan
