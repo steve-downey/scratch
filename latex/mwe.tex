@@ -1,0 +1,46 @@
+\documentclass[a4paper,10pt,oneside,openany,final,article]{memoir}
+
+\input{common}
+
+\usepackage{amssymb,graphicx,stackengine,xcolor}
+\protected\def\ucr{\scalebox{1}{\stackinset{c}{}{c}{-.2pt}{%
+      \textcolor{white}{\sffamily\bfseries\small ?}}{%
+      \rotatebox{45}{$\blacksquare$}}}}
+
+\settocdepth{section}
+
+\begin{document}
+\tableofcontents*
+\chapter{Intro}
+An intro to my problem.
+\section{A Section for the Table of Contents}
+\chapter{Wording}
+Please amend the standing document by inserting a new chapter between the current chapters 4 and 5.
+\begin{@empty}
+  \newcounter{scratchChapter}\setcounter{scratchChapter}{\value{chapter}}
+  \settocdepth{part}
+  \renewcommand\thechapter{\ucr}
+  \renewcommand\thesection{\ucr.\arabic{section}}
+
+  \chapter{A New Chapter}
+  Some contents for the new chapter
+  \section{New Section}
+  Some contents for the new section
+
+\settocdepth{section}
+\setcounter{chapter}{\value{scratchChapter}}
+\end{@empty}
+
+\chapter{Impact on the standard}
+
+A pure library extension, affecting no other parts of the library or language.
+
+The proposed changes are relative to the current working draft~\cite{N4910}.
+
+\renewcommand{\bibname}{References}
+\bibliographystyle{abstract}
+\bibliography{wg21,mybiblio}
+
+\nocite{viewmayb27:online}
+
+\end{document}

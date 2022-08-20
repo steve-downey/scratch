@@ -1,0 +1,24 @@
+\begin{thebibliography}{Dow22}
+
+\bibitem[N4910]{N4910}
+Thomas Köppe.
+\newblock {N4910}: Working draft, standard for programming language c++.
+\newblock \url{https://wg21.link/n4910}, 3 2022.
+
+
+
+
+
+\bibitem[viewmayb27:online]{viewmayb27:online}
+Steve Downey.
+\newblock A view of 0 or 1 elements: views::maybe.
+\newblock
+  \url{https://github.com/steve-downey/view_maybe/blob/master/papers/view-maybe.tex},
+  07 2022.
+\newblock (Accessed on 08/15/2022).
+
+
+
+
+
+\end{thebibliography}
