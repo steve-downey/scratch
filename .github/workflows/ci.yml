@@ -46,8 +46,8 @@ jobs:
 
       - name: Build
         run: |
-          ./bld compile
+          ./bld compile TOOLCHAIN=${{ matrix.compiler }}
 
       - name: Test
         run: |
-          ./bld test
+          ./bld test TOOLCHAIN=${{ matrix.compiler }}
