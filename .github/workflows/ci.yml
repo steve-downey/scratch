@@ -18,8 +18,21 @@ jobs:
           - llvm
           - gcc
           # you can specify the version after `-` like `llvm-13.0.0`.
+        CMAKE_GENERATOR:
+          - "Ninja Multi-Config"
+
+        include:
+          # Inject GCOV variable for gcc
+          - compiler: gcc
+            GCOV: gcov
+          # Inject GCOV variable for llvm
+          - compiler: llvm
+            GCOV: "llvm-cov gcov"
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
         with:
@@ -27,7 +40,22 @@ jobs:
           vcvarsall: ${{ contains(matrix.os, 'windows') }}
           cmake: true
           ninja: true
-          vcpkg: true
+          task: true
           cppcheck: true
           clangtidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
-          # ...
+
+      - name: Build
+        run: |
+          ./bld compile TOOLCHAIN=${{ matrix.compiler }}
+
+      - name: Test
+        run: |
+          ./bld test TOOLCHAIN=${{ matrix.compiler }}
+
+      - name: Test-ASAN
+        run: |
+          ./bld test TOOLCHAIN=${{ matrix.compiler }} CONFIG=Asan
+
+      - name: Test-TSAN
+        run: |
+          ./bld test TOOLCHAIN=${{ matrix.compiler }} CONFIG=Tsan

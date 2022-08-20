@@ -29,7 +29,7 @@ define run_cmake =
 	-G "Ninja Multi-Config" \
 	-DCMAKE_CONFIGURATION_TYPES=$(_configuration_types) \
 	-DCMAKE_INSTALL_PREFIX=$(abspath $(INSTALL_PREFIX)) \
-	-DCMAKE__COMPILE_COMMANDS=1 \
+	-DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
 	$(_cmake_args) \
 	$(CURDIR)
 endef
