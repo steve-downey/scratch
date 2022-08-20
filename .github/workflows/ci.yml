@@ -18,6 +18,17 @@ jobs:
           - llvm
           - gcc
           # you can specify the version after `-` like `llvm-13.0.0`.
+        CMAKE_GENERATOR:
+          - "Ninja Multi-Config"
+
+        include:
+          # Inject GCOV variable for gcc
+          - compiler: gcc
+            GCOV: gcov
+          # Inject GCOV variable for llvm
+          - compiler: llvm
+            GCOV: "llvm-cov gcov"
+
     steps:
       - uses: actions/checkout@v2
       - name: Setup Cpp
@@ -27,7 +38,14 @@ jobs:
           vcvarsall: ${{ contains(matrix.os, 'windows') }}
           cmake: true
           ninja: true
-          vcpkg: true
+          task: true
           cppcheck: true
           clangtidy: true # instead of `true`, which chooses the default version, you can pass a specific version.
-          # ...
+
+      - name: Build
+        run: |
+          ./bld compile
+
+      - name: Test
+        run: |
+          ./bld test
