@@ -13,7 +13,7 @@ DOCKER_CMD := docker volume create cmake.bld; docker-compose run --rm dev
 LOCAL_MAKE_CMD := make -e -f targets.mk
 MAKE_CMD := $(LOCAL_MAKE_CMD)
 
-TARGETS := test clean all ctest
+TARGETS := test clean all ctest realclean cmake
 
 # These targets are only run locally
 LOCAL_ONLY_TARGETS :=
@@ -33,11 +33,11 @@ export
 	$(MAKE_CMD) $@
 
 # These targets are specified separately to enable bash autocomplete.
-$(TARGETS):
+$(TARGETS): .gitmodules
 	$(MAKE_CMD) $@
 
 # These targets that should only be run locally.
-$(LOCAL_ONLY_TARGETS):
+$(LOCAL_ONLY_TARGETS): .gitmodules
 	$(LOCAL_MAKE_CMD) $@
 
 .update-submodules:
@@ -73,4 +73,4 @@ docker-shell: ## Shell in container
 help: ## Show this help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'  $(MAKEFILE_LIST) targets.mk | sort
 
-.PHONY: install ctest cmake clean realclean help
+.PHONY: install ctest cmake clean realclean help cmake

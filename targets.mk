@@ -34,6 +34,7 @@ define run_cmake =
 	$(CURDIR)
 endef
 
+.PHONY: default
 default: compile
 
 $(_build_path):
@@ -44,26 +45,34 @@ $(_build_path)/CMakeCache.txt: | $(_build_path) .gitmodules
 	-rm compile_commands.json
 	ln -s $(_build_path)/compile_commands.json
 
+.PHONY: compile
 compile: $(_build_path)/CMakeCache.txt ## Compile the project
 	cmake --build $(_build_path)  --config $(CONFIG) --target all -- -k 0
 
+.PHONY: install
 install: $(_build_path)/CMakeCache.txt ## Install the project
 	DESTDIR=$(abspath $(DEST)) ninja -C $(_build_path) -k 0  install
 
+.PHONY: ctest
 ctest: $(_build_path)/CMakeCache.txt ## Run CTest on current build
 	cd $(_build_path) && ctest
 
+.PHONY: ctest_
 ctest_ : compile
 	cd $(_build_path) && ctest
 
+.PHONY: test
 test: ctest_ ## Rebuild and run tests
 
+.PHONY: cmake
 cmake: |  $(_build_path)
 	cd $(_build_path) && ${run_cmake}
 
+.PHONY: realclean
 clean: $(_build_path)/CMakeCache.txt ## Clean the build artifacts
 	cmake --build $(_build_path)  --config $(CONFIG) --target clean
 
+.PHONY: realclean
 realclean: ## Delete the build directory
 	rm -rf $(_build_path)
 
