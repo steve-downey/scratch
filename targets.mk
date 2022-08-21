@@ -4,7 +4,6 @@ BUILD_DIR?=../cmake.bld/${PROJECT}
 CONFIGURATION_TYPES?=RelWithDebInfo;Debug;Tsan;Asan
 DEST?=../install
 CMAKE_FLAGS?=
-CONFIG?=RelWithDebInfo
 USE_DOCKER_FILE>=.use-docker
 
 export
@@ -21,6 +20,11 @@ else
 	_cmake_args=-DCMAKE_TOOLCHAIN_FILE=$(CURDIR)/etc/$(TOOLCHAIN)-toolchain.cmake
 endif
 
+ifeq ($(strip $(CONFIG)),)
+_config=RelWithDebInfo
+else
+_config=$(CONFIG)
+endif
 
 _build_path?=$(_build_dir)/$(_build_name)
 
@@ -47,7 +51,7 @@ $(_build_path)/CMakeCache.txt: | $(_build_path) .gitmodules
 
 .PHONY: compile
 compile: $(_build_path)/CMakeCache.txt ## Compile the project
-	cmake --build $(_build_path)  --config $(CONFIG) --target all -- -k 0
+	cmake --build $(_build_path)  --config $(_config) --target all -v -- -k 0
 
 .PHONY: install
 install: $(_build_path)/CMakeCache.txt ## Install the project
@@ -70,7 +74,7 @@ cmake: |  $(_build_path)
 
 .PHONY: realclean
 clean: $(_build_path)/CMakeCache.txt ## Clean the build artifacts
-	cmake --build $(_build_path)  --config $(CONFIG) --target clean
+	cmake --build $(_build_path)  --config $(_config) --target clean
 
 .PHONY: realclean
 realclean: ## Delete the build directory

@@ -10,7 +10,7 @@ CMAKE_FLAGS?=
 #CONFIG?=RelWithDebInfo
 USE_DOCKER_FILE:=.use-docker
 DOCKER_CMD := docker volume create cmake.bld; docker-compose run --rm dev
-LOCAL_MAKE_CMD := make -e -f targets.mk
+LOCAL_MAKE_CMD := make -f targets.mk
 MAKE_CMD := $(LOCAL_MAKE_CMD)
 
 TARGETS := test clean all ctest realclean cmake
@@ -30,11 +30,11 @@ endif
 export
 
 .DEFAULT:
-	$(MAKE_CMD) $@
+	$(MAKE_CMD) $@ CONFIG=$(CONFIG) TOOLCHAIN=$(TOOLCHAIN)
 
 # These targets are specified separately to enable bash autocomplete.
 $(TARGETS): .gitmodules
-	$(MAKE_CMD) $@
+	$(MAKE_CMD) $@ CONFIG=$(CONFIG) TOOLCHAIN=$(TOOLCHAIN)
 
 # These targets that should only be run locally.
 $(LOCAL_ONLY_TARGETS): .gitmodules
