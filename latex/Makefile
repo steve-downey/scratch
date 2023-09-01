@@ -6,14 +6,14 @@
 CMAKE_FLAGS?=
 DEPS_DIR := .deps
 MAKEFLAGS += --no-builtin-rules
-VENV := .venv/
-PIP := $(PYEXEC) -m pip
-PIP_SYNC := $(PYEXEC) -m piptools sync
-PYEXEC := $(SOURCE_VENV) python
+VENV := .venv
+PYEXEC := $(SOURCE_VENV) $(PYTHON)
 PYEXECPATH ?= $(shell which python3.10 || which python3.9 || which python3.8 || which python3.7 || which python3)
 PYTHON ?= $(shell basename $(PYEXECPATH))
 REQS_MARKER := $(VENV)/bin/.pip-sync
 SOURCE_VENV := . $(VENV)/bin/activate;
+PIP := $(PYEXEC) -m pip
+PIP_SYNC := $(PYEXEC) -m piptools sync
 
 .DEFAULT_GOAL := help
 

@@ -34,9 +34,7 @@
 \hypersetup{pdftitle={C++ Working Draft},
             pdfsubject={ISO/IEC JTC1 SC22 WG21, C++},
             pdfcreator={Thomas K\"{o}ppe},
-            bookmarks=true,
             bookmarksnumbered=true,
-            pdfpagelabels=true,
             pdfpagemode=UseOutlines,
             pdfstartview=FitH,
             linktocpage=true,
@@ -44,7 +42,7 @@
             linkcolor=blue,
             plainpages=false}
 \usepackage{memhfixc}     % fix interactions between hyperref and memoir
-%% \usepackage[active,header=false,handles=false,copydocumentclass=false,generate=std-gram.ext,extract-cmdline={gramSec},extract-env={bnf,simplebnf}]{extract} % Grammar extraction
+\usepackage[active,header=false,handles=false,copydocumentclass=false,generate=std-gram.ext,extract-cmdline={gramSec},extract-env={bnf,simplebnf}]{extract} % Grammar extraction
 \usepackage{expl3}
 \usepackage{xparse}
 \usepackage{xstring}
@@ -76,6 +74,7 @@
 \pdfstringdefDisableCommands{\def\textbf#1{#1}}
 \pdfstringdefDisableCommands{\def\raisebox#1{}}
 \pdfstringdefDisableCommands{\def\hspace#1{}}
+\pdfstringdefDisableCommands{\def\frenchspacing{}}
 
 %%--------------------------------------------------
 %% add special hyphenation rules
@@ -94,45 +93,45 @@
 \input{config}
 
 %%--------------------------------------------------
-front matter
+%% front matter
 \frontmatter
-%% \include{front}
+\include{front}
 
 %%--------------------------------------------------
 %% main body of the document
 \mainmatter
 \setglobalstyles
 
-%% \include{intro}
-%% \include{lex}
-%% \include{basic}
-%% \include{expressions}
-%% \include{statements}
-%% \include{declarations}
-%% \include{modules}
-%% \include{classes}
-%% \include{overloading}
-%% \include{templates}
-%% \include{exceptions}
-%% \include{preprocessor}
-%% \include{lib-intro}
-%% \include{support}
-%% \include{concepts}
-%% \include{diagnostics}
-%% \include{memory}
-%% \include{meta}
-%% \include{utilities}
-%% \include{strings}
-%% \include{containers}
-%% \include{iterators}
-%% \include{ranges}
-%% \include{algorithms}
-%% \include{numerics}
-%% \include{time}
-%% \include{locales}
-%% \include{iostreams}
-%% \include{regex}
-%% \include{threads}
+\include{intro}
+\include{lex}
+\include{basic}
+\include{expressions}
+\include{statements}
+\include{declarations}
+\include{modules}
+\include{classes}
+\include{overloading}
+\include{templates}
+\include{exceptions}
+\include{preprocessor}
+\include{lib-intro}
+\include{support}
+\include{concepts}
+\include{diagnostics}
+\include{memory}
+\include{meta}
+\include{utilities}
+\include{strings}
+\include{containers}
+\include{iterators}
+\include{ranges}
+\include{algorithms}
+\include{numerics}
+\include{time}
+\include{locales}
+\include{iostreams}
+\include{regex}
+\include{threads}
 
 %%--------------------------------------------------
 %% appendices
@@ -144,16 +143,16 @@ front matter
 \immediate\write\@auxout{\noexpand\@writefile{toc}{\noexpand\let\noexpand\chapternumberlinebox\noexpand\annexnumberlinebox}}
 \makeatother
 
-%% \include{grammar}
-%% \include{limits}
-%% \include{compatibility}
-%% \include{future}
-%% \include{uax31}
+\include{grammar}
+\include{limits}
+\include{compatibility}
+\include{future}
+\include{uax31}
 
 %%--------------------------------------------------
 %% back matter
-%% \backmatter
-%% \include{back}
+\backmatter
+\include{back}
 
 
 %%--------------------------------------------------
